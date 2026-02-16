@@ -32,6 +32,7 @@ def main():
         v2.RandomHorizontalFlip(p=0.5),
         v2.RandomCrop(size=(224,224)),
         v2.PILToTensor(),
+        v2.ToDtype(torch.float, scale=False),
         v2.Normalize(mean=[0.485, 0.456, 0.406], 
                          std=[0.229, 0.224, 0.225])
     ])
@@ -44,7 +45,7 @@ def main():
         v2.PILToTensor(),
     ])
 
-    resnet_model = ResNetModel(device, log=True)
+    resnet_model = ResNetModel(device, log=False)
     resnet_model.train(root_directory, num_epochs, batch_size, learning_rate, momentum, weight_decay, spatial_transforms, color_transforms, validation_transforms)
 
 if __name__ == "__main__":
