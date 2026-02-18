@@ -29,6 +29,7 @@ def main():
     weight_decay = 1e-4
 
     spatial_transforms = v2.Compose([  
+        v2.Resize(size=(480,480)),
         v2.RandomHorizontalFlip(p=0.5),
         v2.RandomCrop(size=(224,224)),
         v2.PILToTensor(),
