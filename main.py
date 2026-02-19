@@ -23,7 +23,7 @@ def main():
 
     # Hyperparams
     num_epochs = 40
-    batch_size = 64 # the paper used 256 but they probably had a bigger gpu
+    batch_size = 128 # the paper used 256 but they probably had a bigger gpu
     learning_rate = 0.1
     momentum = 0.9
     weight_decay = 1e-4
@@ -46,7 +46,7 @@ def main():
         v2.PILToTensor(),
     ])
 
-    resnet_model = ResNetModel(device, log=False)
+    resnet_model = ResNetModel(device, log=True)
     resnet_model.train(root_directory, num_epochs, batch_size, learning_rate, momentum, weight_decay, spatial_transforms, color_transforms, validation_transforms)
 
 if __name__ == "__main__":

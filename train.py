@@ -29,7 +29,7 @@ class ResNetModel:
         val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
         
         best_loss = float("inf")
-        global_steps = 0
+        logging_steps = 0
         for epoch in range(num_epochs):
 
             # begin training loop 
@@ -51,23 +51,22 @@ class ResNetModel:
                 optimizer.step() # SGD optimizing step
 
                 running_loss += loss.item()
-                if self.log and (i % 10 == 0):
-                    self.wandb_log.log({"eval/loss": loss.item()}, step=global_steps)
-                
-                global_steps += 1
+                if self.log and (i % 20 == 0):
+                    wandb_log.log({"eval/loss": loss.item()}, step=logging_steps)
+                    logging_steps += 1
             
-            # validation_loss, validation_accuracy, validation_top_5_accuracy = self.validation(val_dataset, val_dataloader) 
+            validation_loss, validation_accuracy, validation_top_5_accuracy = self.validation(val_dataset, val_dataloader) 
 
-            # print(f"Epoch: {epoch} Training Loss: {running_loss/len(train_dataloader)} Validation Loss: {validation_loss}")
-            # if self.log:
-            #     self.wandb_log.log({
-            #         "validation_loss": validation_loss,
-            #         "validation_accuracy": validation_accuracy,
-            #         "validation_top_5_accuracy": validation_top_5_accuracy
-            #     })
-            # if validation_loss < best_loss:
-            #     torch.save(self.model.state_dict(), "model_weights/best_val_loss.pt")
-            #     best_loss = validation_loss
+            print(f"Epoch: {epoch} Training Loss: {running_loss/len(train_dataloader)} Validation Loss: {validation_loss}")
+            if self.log:
+                wandb_log.log({
+                    "validation_loss": validation_loss,
+                    "validation_accuracy": validation_accuracy,
+                    "validation_top_5_accuracy": validation_top_5_accuracy
+                })
+            if validation_loss < best_loss:
+                torch.save(self.model.state_dict(), "model_weights/best_val_loss.pt")
+                best_loss = validation_loss
 
     def validation(self, val_dataset, val_dataloader):
         total_loss = 0
