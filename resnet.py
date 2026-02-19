@@ -134,13 +134,12 @@ class ResNet(nn.Module):
         res64_layer2_residuals = F.relu(res64_layer2_output + res64_layer1_residuals) # residual - F(x) + x
 
         res64_layer3_output = self.res64_layer3(res64_layer2_residuals) # convolution - F(x)
-        res64_layer3_residuals = F.relu(res64_layer3_output + res64_layer2_output) # residual - F(x) + x
+        res64_layer3_residuals = F.relu(res64_layer3_output + res64_layer2_residuals) # residual - F(x) + x
 
         # 128 Channels Layers
         res128_layer1_output = self.res128_layer1(res64_layer3_residuals) # convolution - F(x)
         #transform residuals from 64 channels to 128 
-        reshaped_64_residuals = res64_layer3_output.reshape(res64_layer3_output.shape[0], 128,28,-1)[:,:,:,:28]
-        reshaped_64_residuals = res64_layer3_output.reshape(res64_layer3_output.shape[0], res64_layer3_output.shape[1]*2,res64_layer3_output.shape[2]//2,-1)
+        reshaped_64_residuals = res64_layer3_residuals.reshape(res64_layer3_residuals.shape[0], res64_layer3_residuals.shape[1]*2,res64_layer3_residuals.shape[2]//2,-1)
         reshaped_64_residuals = reshaped_64_residuals[:,:,:,:reshaped_64_residuals.shape[2]]
         res128_layer1_residuals = F.relu(res128_layer1_output + reshaped_64_residuals) # residual - F(x) + x
 
@@ -148,45 +147,45 @@ class ResNet(nn.Module):
         res128_layer2_residuals = F.relu(res128_layer2_output + res128_layer1_residuals) # residual - F(x) + x
 
         res128_layer3_output = self.res128_layer3(res128_layer2_residuals) # convolution - F(x)
-        res128_layer3_residuals = F.relu(res128_layer3_output + res128_layer2_output) # residual - F(x) + x
+        res128_layer3_residuals = F.relu(res128_layer3_output + res128_layer2_residuals) # residual - F(x) + x
 
         res128_layer4_output = self.res128_layer4(res128_layer3_residuals) # convolution - F(x)
-        res128_layer4_residuals = F.relu(res128_layer4_output + res128_layer3_output) # residual - F(x) + x
+        res128_layer4_residuals = F.relu(res128_layer4_output + res128_layer3_residuals) # residual - F(x) + x
 
         # 256 Channels Layers
         res256_layer1_output = self.res256_layer1(res128_layer4_residuals) # convolution - F(x)
         #transform residuals from 64 channels to 128 
-        reshaped_128_residuals = res128_layer4_output.reshape(res128_layer4_output.shape[0], res128_layer4_output.shape[1]*2,res128_layer4_output.shape[2]//2,-1)
+        reshaped_128_residuals = res128_layer4_residuals.reshape(res128_layer4_residuals.shape[0], res128_layer4_residuals.shape[1]*2,res128_layer4_residuals.shape[2]//2,-1)
         reshaped_128_residuals = reshaped_128_residuals[:,:,:,:reshaped_128_residuals.shape[2]]
         res256_layer1_residuals = F.relu(res256_layer1_output + reshaped_128_residuals) # residual - F(x) + x
 
         res256_layer2_output = self.res256_layer2(res256_layer1_residuals) # convolution - F(x)
-        res256_layer2_residuals = F.relu(res256_layer1_output + res256_layer1_residuals) # residual - F(x) + x
+        res256_layer2_residuals = F.relu(res256_layer2_output + res256_layer1_residuals) # residual - F(x) + x
 
         res256_layer3_output = self.res256_layer3(res256_layer2_residuals) # convolution - F(x)
-        res256_layer3_residuals = F.relu(res256_layer3_output + res256_layer2_output) # residual - F(x) + x
+        res256_layer3_residuals = F.relu(res256_layer3_output + res256_layer2_residuals) # residual - F(x) + x
 
         res256_layer4_output = self.res256_layer4(res256_layer3_residuals) # convolution - F(x)
-        res256_layer4_residuals = F.relu(res256_layer4_output + res256_layer3_output) # residual - F(x) + x
+        res256_layer4_residuals = F.relu(res256_layer4_output + res256_layer3_residuals) # residual - F(x) + x
 
         res256_layer5_output = self.res256_layer4(res256_layer4_residuals) # convolution - F(x)
-        res256_layer5_residuals = F.relu(res256_layer5_output + res256_layer4_output) # residual - F(x) + x
+        res256_layer5_residuals = F.relu(res256_layer5_output + res256_layer4_residuals) # residual - F(x) + x
 
         res256_layer6_output = self.res256_layer6(res256_layer5_residuals) # convolution - F(x)
-        res256_layer6_residuals = F.relu(res256_layer6_output + res256_layer5_output) # residual - F(x) + x
+        res256_layer6_residuals = F.relu(res256_layer6_output + res256_layer5_residuals) # residual - F(x) + x
 
         # 512 Channels Layers
         res512_layer1_output = self.res512_layer1(res256_layer6_residuals) # convolution - F(x)
         #transform residuals from 64 channels to 128 
-        reshaped_256_residuals = res256_layer6_output.reshape(res256_layer6_output.shape[0], res256_layer6_output.shape[1]*2,res256_layer6_output.shape[2]//2,-1)
+        reshaped_256_residuals = res256_layer6_residuals.reshape(res256_layer6_residuals.shape[0], res256_layer6_residuals.shape[1]*2,res256_layer6_residuals.shape[2]//2,-1)
         reshaped_256_residuals = reshaped_256_residuals[:,:,:,:reshaped_256_residuals.shape[2]]
         res512_layer1_residuals = F.relu(res512_layer1_output + reshaped_256_residuals) # residual - F(x) + x
 
         res512_layer2_output = self.res512_layer2(res512_layer1_residuals) # convolution - F(x)
-        res512_layer2_residuals = F.relu(res512_layer1_output + res512_layer1_residuals) # residual - F(x) + x
+        res512_layer2_residuals = F.relu(res512_layer2_output + res512_layer1_residuals) # residual - F(x) + x
 
         res512_layer3_output = self.res512_layer3(res512_layer2_residuals) # convolution - F(x)
-        res512_layer3_residuals = F.relu(res512_layer3_output + res512_layer2_output) # residual - F(x) + x
+        res512_layer3_residuals = F.relu(res512_layer3_output + res512_layer2_residuals) # residual - F(x) + x
 
         # avg pool and output layer 
         avg_pool = self.avg_pool(res512_layer3_residuals)
