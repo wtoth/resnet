@@ -7,111 +7,130 @@ class ResNet(nn.Module):
         super().__init__()
         self.input_layer = nn.Sequential(
             nn.Conv2d(in_channels=3, out_channels=64, kernel_size=7, stride=2, padding=3),
+            nn.BatchNorm2d(64),
+            nn.ReLU(True),
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         )
 
         # 64 channel residual layers 
         self.res64_layer1 = nn.Sequential(
             nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1),
+            nn.BatchNorm2d(64),
             nn.ReLU(True),
             nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(64)
         )
         self.res64_layer2 = nn.Sequential(
             nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1),
+            nn.BatchNorm2d(64),
             nn.ReLU(True),
             nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(64)
         )
         self.res64_layer3 = nn.Sequential(
             nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1),
+            nn.BatchNorm2d(64),
             nn.ReLU(True),
             nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(64)
         )
 
        # 128 channel residual layers 
         self.res128_layer1 = nn.Sequential(
             nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, stride=2, padding=1),
+            nn.BatchNorm2d(128),
             nn.ReLU(True),
             nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(128)
         )
         self.res128_layer2 = nn.Sequential(
             nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1),
+            nn.BatchNorm2d(128),
             nn.ReLU(True),
             nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(128)
         )
         self.res128_layer3 = nn.Sequential(
             nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1),
+            nn.BatchNorm2d(128),
             nn.ReLU(True),
             nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(128)
         )
         self.res128_layer4 = nn.Sequential(
             nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1),
+            nn.BatchNorm2d(128),
             nn.ReLU(True),
             nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(128)
         )
 
         # 256 channel residual layers 
         self.res256_layer1 = nn.Sequential(
             nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, stride=2, padding=1),
+            nn.BatchNorm2d(256),
             nn.ReLU(True),
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(256)
         )
         self.res256_layer2 = nn.Sequential(
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
             nn.ReLU(True),
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(256)
         )
         self.res256_layer3 = nn.Sequential(
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
             nn.ReLU(True),
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
             nn.ReLU(True)
         )
         self.res256_layer4 = nn.Sequential(
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
             nn.ReLU(True),
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(256)
         )
         self.res256_layer5 = nn.Sequential(
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
             nn.ReLU(True),
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(256)
         )
         self.res256_layer6 = nn.Sequential(
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
             nn.ReLU(True),
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(256)
         )
 
         # 512 channel residual layers 
         self.res512_layer1 = nn.Sequential(
             nn.Conv2d(in_channels=256, out_channels=512, kernel_size=3, stride=2, padding=1),
+            nn.BatchNorm2d(512),
             nn.ReLU(True),
             nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(512)
         )
         self.res512_layer2 = nn.Sequential(
             nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1),
+            nn.BatchNorm2d(512),
             nn.ReLU(True),
             nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(512)
         )
         self.res512_layer3 = nn.Sequential(
             nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1),
+            nn.BatchNorm2d(512),
             nn.ReLU(True),
             nn.Conv2d(in_channels=512, out_channels=512, kernel_size=3, padding=1),
-            nn.ReLU(True)
+            nn.BatchNorm2d(512)
         )
 
         self.avg_pool = nn.AvgPool2d(2)
@@ -168,7 +187,7 @@ class ResNet(nn.Module):
         res256_layer4_output = self.res256_layer4(res256_layer3_residuals) # convolution - F(x)
         res256_layer4_residuals = F.relu(res256_layer4_output + res256_layer3_residuals) # residual - F(x) + x
 
-        res256_layer5_output = self.res256_layer4(res256_layer4_residuals) # convolution - F(x)
+        res256_layer5_output = self.res256_layer5(res256_layer4_residuals) # convolution - F(x)
         res256_layer5_residuals = F.relu(res256_layer5_output + res256_layer4_residuals) # residual - F(x) + x
 
         res256_layer6_output = self.res256_layer6(res256_layer5_residuals) # convolution - F(x)
