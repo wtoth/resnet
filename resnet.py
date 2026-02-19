@@ -158,8 +158,7 @@ class ResNet(nn.Module):
         # 128 Channels Layers
         res128_layer1_output = self.res128_layer1(res64_layer3_residuals) # convolution - F(x)
         #transform residuals from 64 channels to 128 
-        reshaped_64_residuals = res64_layer3_residuals.reshape(res64_layer3_residuals.shape[0], res64_layer3_residuals.shape[1]*2,res64_layer3_residuals.shape[2]//2,-1)
-        reshaped_64_residuals = reshaped_64_residuals[:,:,:,:reshaped_64_residuals.shape[2]]
+        reshaped_64_residuals = self._option_a_padding(res64_layer3_residuals, out_channels=128)
         res128_layer1_residuals = F.relu(res128_layer1_output + reshaped_64_residuals) # residual - F(x) + x
 
         res128_layer2_output = self.res128_layer2(res128_layer1_residuals) # convolution - F(x)
@@ -173,9 +172,8 @@ class ResNet(nn.Module):
 
         # 256 Channels Layers
         res256_layer1_output = self.res256_layer1(res128_layer4_residuals) # convolution - F(x)
-        #transform residuals from 64 channels to 128 
-        reshaped_128_residuals = res128_layer4_residuals.reshape(res128_layer4_residuals.shape[0], res128_layer4_residuals.shape[1]*2,res128_layer4_residuals.shape[2]//2,-1)
-        reshaped_128_residuals = reshaped_128_residuals[:,:,:,:reshaped_128_residuals.shape[2]]
+        #transform residuals from 128 channels to 256 
+        reshaped_128_residuals = self._option_a_padding(res128_layer4_residuals, out_channels=256)
         res256_layer1_residuals = F.relu(res256_layer1_output + reshaped_128_residuals) # residual - F(x) + x
 
         res256_layer2_output = self.res256_layer2(res256_layer1_residuals) # convolution - F(x)
@@ -195,9 +193,8 @@ class ResNet(nn.Module):
 
         # 512 Channels Layers
         res512_layer1_output = self.res512_layer1(res256_layer6_residuals) # convolution - F(x)
-        #transform residuals from 64 channels to 128 
-        reshaped_256_residuals = res256_layer6_residuals.reshape(res256_layer6_residuals.shape[0], res256_layer6_residuals.shape[1]*2,res256_layer6_residuals.shape[2]//2,-1)
-        reshaped_256_residuals = reshaped_256_residuals[:,:,:,:reshaped_256_residuals.shape[2]]
+        # transform residuals from 256 channels to 512
+        reshaped_256_residuals = self._option_a_padding(res256_layer6_residuals, out_channels=512)
         res512_layer1_residuals = F.relu(res512_layer1_output + reshaped_256_residuals) # residual - F(x) + x
 
         res512_layer2_output = self.res512_layer2(res512_layer1_residuals) # convolution - F(x)
@@ -219,3 +216,21 @@ class ResNet(nn.Module):
                 nn.init.kaiming_normal_(m.weight, mode='fan_in', nonlinearity='relu')
                 if m.bias is not None:
                     nn.init.zeros_(m.bias)
+    
+    # Per the paper:
+    #  When the dimensions increase (dotted line shortcuts in Fig. 3), we consider two options: (A) The shortcut still 
+    #  performs identity mapping, with extra zero entries paddedfor increasing dimensions. This option introduces no extra parameter;
+    def _option_a_padding(self, x, out_channels, stride=2):
+        x = F.avg_pool2d(x, kernel_size=stride, stride=stride) #downsample using avg_pooling (other options work as well)
+
+        missing_zeros = out_channels - x.shape[1] # solves for num_zeros needed
+        x = F.pad(x, (0, 0, 0, 0, 0, missing_zeros)) # adds zeros to the missing dimension 
+        return x
+    
+    # (B) The projection shortcut in Eqn.(2) is used to match dimensions (done by 1×1 convolutions). For both options, when the shortcuts go across feature 
+    # maps of two sizes, they are performed with a stride of 2.
+    def _option_b_projection(self, in_channels, out_channels, stride=2):
+        return nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride, bias=False),
+            nn.BatchNorm2d(out_channels)
+        )
