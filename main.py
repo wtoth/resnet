@@ -23,7 +23,7 @@ def main():
 
     # Hyperparams
     num_epochs = 40
-    batch_size = 128 # the paper used 256 but they probably had a bigger gpu
+    batch_size = 64 # the paper used 256 but they probably had a bigger gpu
     learning_rate = 0.1
     momentum = 0.9
     weight_decay = 1e-4
@@ -43,6 +43,8 @@ def main():
     ])
 
     validation_transforms = v2.Compose([
+        v2.Resize(size=(480,480)),
+        v2.RandomCrop(size=(224,224)),
         v2.PILToTensor(),
     ])
 
