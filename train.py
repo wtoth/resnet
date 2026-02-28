@@ -20,14 +20,15 @@ class ResNetModel:
             wandb_log = self.init_logging(batch_size, learning_rate, momentum, weight_decay, num_epochs)
 
         optimizer = torch.optim.SGD(self.model.parameters(), lr=learning_rate, momentum=momentum, weight_decay=weight_decay)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=5, factor=0.1)
         
         # Create Datasets 
         training_dataset = ImageNetDataset(root_directory, dataset="data/train_dataset.csv", transform=spatial_transforms)
-        train_dataloader = DataLoader(training_dataset, batch_size=batch_size, shuffle=False)
+        train_dataloader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
         
         val_dataset = ImageNetDataset(root_directory, dataset="data/val_dataset.csv", transform=validation_transforms)
         val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-        
+
         best_loss = float("inf")
         logging_steps = 0
         for epoch in range(num_epochs):
@@ -51,18 +52,20 @@ class ResNetModel:
                 optimizer.step() # SGD optimizing step
 
                 running_loss += loss.item()
-                if self.log and (i % 20 == 0):
+                if self.log and (i % 10 == 0) and i > 0:
                     wandb_log.log({"eval/loss": loss.item()}, step=logging_steps)
                     logging_steps += 1
             
             validation_loss, validation_accuracy, validation_top_5_accuracy = self.validation(val_dataset, val_dataloader) 
+            scheduler.step(validation_loss) # perform lr reduction if validation loss doesn't improve
 
             print(f"Epoch: {epoch} Training Loss: {running_loss/len(train_dataloader)} Validation Loss: {validation_loss}")
             if self.log:
                 wandb_log.log({
                     "validation_loss": validation_loss,
                     "validation_accuracy": validation_accuracy,
-                    "validation_top_5_accuracy": validation_top_5_accuracy
+                    "validation_top_5_accuracy": validation_top_5_accuracy,
+                    "learning_rate": optimizer.param_groups[0]['lr']
                 })
             if validation_loss < best_loss:
                 torch.save(self.model.state_dict(), "model_weights/best_val_loss.pt")
