@@ -22,10 +22,5 @@ class ImageNetDataset(Dataset):
 
         if self.transform:
             image = self.transform(image)
-        if isinstance(image, tuple): # handles Test 5crop case
-            image = list(image)
-            for i in range(len(image)):
-                image[i] = image[i].float() / 255.0 # normalize rgb 
-        else: #train case
-            image = image/255.0
+
         return image, label

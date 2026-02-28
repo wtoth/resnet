@@ -29,11 +29,11 @@ def main():
     weight_decay = 1e-4
 
     spatial_transforms = v2.Compose([  
-        v2.Resize(size=(480,480)),
+        v2.Resize([480, 480]),
         v2.RandomHorizontalFlip(p=0.5),
         v2.RandomCrop(size=(224,224)),
         v2.PILToTensor(),
-        v2.ToDtype(torch.float, scale=False),
+        v2.ToDtype(torch.float, scale=True),
         v2.Normalize(mean=[0.485, 0.456, 0.406], 
                          std=[0.229, 0.224, 0.225])
     ])
@@ -44,12 +44,15 @@ def main():
 
     validation_transforms = v2.Compose([
         v2.Resize(size=(480,480)),
-        v2.RandomCrop(size=(224,224)),
+        v2.CenterCrop(size=(224,224)),
         v2.PILToTensor(),
+        v2.ToDtype(torch.float32, scale=True),
+        v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    resnet_model = ResNetModel(device, log=True)
-    resnet_model.train(root_directory, num_epochs, batch_size, learning_rate, momentum, weight_decay, spatial_transforms, color_transforms, validation_transforms)
+    resnet = ResNetModel(device, log=True)
+    resnet.model.load_state_dict(torch.load("model_weights/best_val_loss_5-24.pt", weights_only=True))
+    resnet.train(root_directory, num_epochs, batch_size, learning_rate, momentum, weight_decay, spatial_transforms, color_transforms, validation_transforms)
 
 if __name__ == "__main__":
     main()
