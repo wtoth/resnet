@@ -85,8 +85,7 @@ class ResNet(nn.Module):
             nn.BatchNorm2d(256),
             nn.ReLU(True),
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(True)
+            nn.BatchNorm2d(256)
         )
         self.res256_layer4 = nn.Sequential(
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1),
@@ -133,9 +132,9 @@ class ResNet(nn.Module):
             nn.BatchNorm2d(512)
         )
 
-        self.avg_pool = nn.AvgPool2d(2)
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
 
-        self.output = nn.Linear(in_features=3*3*512, out_features=1000) 
+        self.output = nn.Linear(in_features=512, out_features=1000) 
 
         self.init_weights()
 
